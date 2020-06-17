@@ -1,9 +1,10 @@
 package kr.co.fastcampus.eatgo.domain;
+import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class MenuItemRepositoryImpl implements MenuItemRepository {
 
     private List<MenuItem> menuItems = new ArrayList();

@@ -3,24 +3,53 @@ package kr.co.fastcampus.eatgo.application;
 import kr.co.fastcampus.eatgo.domain.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 public class RestaurantServiceTest {
 
     private RestaurantService restaurantService;
+
+    @Mock
     private RestaurantRepository restaurantRepository;
+
+    @Mock // 가짜 객체로 만들어도 상관 없는 것들이므로
     private MenuItemRepository menuItemRepository;
 
     @Before // 모든 테스트를 실행하기전에 setUp을 시켜주는 것이므로, Before 주석을 사용하는 것.
     public void setUp(){
-        restaurantRepository = new RestaurantRepositoryImpl();
-        menuItemRepository = new MenuItemRepositoryImpl();
+        MockitoAnnotations.initMocks(this); // 위에 선언한 Mock객체들을 말해주는 것
+        // Spring Annotation을 선언 안했으므로, 자동으로 해주지 않기 때문
+
+        mockRestaurantRepository();
+        mockMenuItemRepository();
+
         restaurantService = new RestaurantService(restaurantRepository, menuItemRepository);
 
+    }
+
+    private void mockMenuItemRepository() {
+        List<MenuItem> menuItems = new ArrayList();
+        menuItems.add(new MenuItem("Kimchi"));
+        given(menuItemRepository.findAllByRestaurantId(1004L)).willReturn(menuItems);
+    }
+
+    private void mockRestaurantRepository() {
+        List<Restaurant> restaurants = new ArrayList();
+        Restaurant restaurant = new Restaurant(1004L, "Bob zip", "Seoul");
+        restaurants.add(restaurant);
+
+        given(restaurantRepository.findAll()).willReturn(restaurants);
+        given(restaurantRepository.findById(1004L)).willReturn(restaurant);
+        given(restaurantRepository.save(any())).willReturn(restaurant);
     }
 
     @Test
@@ -35,6 +64,16 @@ public class RestaurantServiceTest {
         assertThat(restaurant.getId(), is(1004L));
         MenuItem menuItem = restaurant.getMenuItems().get(0);
         assertThat(menuItem.getName(), is("Kimchi"));
+    }
+
+    @Test
+    public void addRestaurant(){
+        Restaurant restaurant = new Restaurant("BeRyong", "Busan");
+        Restaurant created = new Restaurant(1234L, "BeRyong", "Busan");
+
+        given(restaurantRepository.save(any())).willReturn(restaurant);
+
+        assertThat(created.getId(), is(1234L));
     }
 
 }
