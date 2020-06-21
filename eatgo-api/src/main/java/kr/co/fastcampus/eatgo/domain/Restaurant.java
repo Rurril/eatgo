@@ -1,38 +1,37 @@
 package kr.co.fastcampus.eatgo.domain;
 
+import com.sun.javafx.beans.IDProperty;
+import lombok.*;
+
+import javax.annotation.ManagedBean;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Getter
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Restaurant {
 
-
-    private String name;
-    private String address;
+    @Id
+    @GeneratedValue
+    @Setter
     private long id;
-    private List<MenuItem> menuItems = new ArrayList<>();
 
-    public Restaurant() {
+    @NotEmpty
+    private String name;
 
-    }
+    @NotEmpty
+    private String address;
 
-    public Restaurant(String name, String address) {
-        this.name = name;
-        this.address = address;
-    }
-
-    public Restaurant(long id, String name, String address) {
-        this.address = address;
-        this.id = id;
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getAddress() {
-        return address;
-    }
+    @Transient // 임의로 만들어서, DB처리를 하거나 하지 않을 것이라는 것
+    private List<MenuItem> menuItems;
 
     public String getInformation(){
         return name + " in " + address;
@@ -42,21 +41,12 @@ public class Restaurant {
         return menuItems;
     }
 
-    public void addMenuItem(MenuItem menuItem){
-        menuItems.add(menuItem);
-    }
-
-    public long getId() {
-        return this.id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public void setMenuItems(List<MenuItem> menuItems) {
-        for(MenuItem menuItem : menuItems){
-            addMenuItem(menuItem);
-        }
+        this.menuItems = new ArrayList<>(menuItems);
+    }
+
+    public void updateInformation(String name, String address) {
+        this.name = name;
+        this.address = address;
     }
 }
