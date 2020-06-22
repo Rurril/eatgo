@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.ResourceAccessException;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,11 +30,11 @@ public class RestaurantController {
 
     @GetMapping("/restaurants/{id}")
     public Restaurant detail(@PathVariable("id") Long id){
-//        Restaurant restaurant = RestaurantService.getRestaurantById(id); // 기본정보 + 메뉴 정보
+
         Restaurant restaurant = restaurantService.getRestaurant(id);
-        restaurant.setMenuItems(Arrays.asList(MenuItem.builder()
-                .name("Kimchi")
-                .build()));
+//        restaurant.setMenuItems(Arrays.asList(MenuItem.builder()
+//                .name("Kimchi")
+//                .build()));
         return restaurant;
     }
 
@@ -41,6 +43,7 @@ public class RestaurantController {
         Restaurant restaurant = restaurantService.addRestaurant(Restaurant.builder()
                                 .name(resource.getName())
                                 .address(resource.getAddress())
+                                .menuItems(new ArrayList<>())
                                 .build());
 
         URI location = new URI("/restaurants/" + restaurant.getId());
