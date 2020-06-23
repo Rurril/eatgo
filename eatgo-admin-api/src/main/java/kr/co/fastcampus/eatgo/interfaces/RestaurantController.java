@@ -31,11 +31,7 @@ public class RestaurantController {
     @GetMapping("/restaurants/{id}")
     public Restaurant detail(@PathVariable("id") Long id){
 
-        Restaurant restaurant = restaurantService.getRestaurant(id);
-//        restaurant.setMenuItems(Arrays.asList(MenuItem.builder()
-//                .name("Kimchi")
-//                .build()));
-        return restaurant;
+        return restaurantService.getRestaurant(id);
     }
 
     @PostMapping("/restaurants")
