@@ -11,4 +11,6 @@ public interface MenuItemRepository extends CrudRepository<MenuItem, Long> {
     default Iterable<MenuItem> findAllById(Iterable<Long> longs) {
         return null;
     }
+
+    void deleteById(Long id);
 }

@@ -10,16 +10,18 @@ import java.util.List;
 @Service // 이러한 어플리케이션 계층은 컴포넌트가 아니라, service로 스프링에서 관리를 한다.
 public class RestaurantService {
 
-    @Autowired
-    RestaurantRepository restaurantRepository;
 
-    @Autowired
-    MenuItemRepository menuItemRepository;
+    private RestaurantRepository restaurantRepository;
+    private MenuItemRepository menuItemRepository;
+    private ReviewRepository reviewRepository;
 
-
-    public RestaurantService(RestaurantRepository restaurantRepository, MenuItemRepository menuItemRepository) {
+    @Autowired // 한번에 세 개의 Repository를 Autowired 시켜버렸다.
+    public RestaurantService(RestaurantRepository restaurantRepository,
+                             MenuItemRepository menuItemRepository,
+                             ReviewRepository reviewRepository) {
         this.restaurantRepository = restaurantRepository;
         this.menuItemRepository = menuItemRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public List<Restaurant> getRestaurants() {
@@ -32,6 +34,10 @@ public class RestaurantService {
 
         List<MenuItem> menuItems = menuItemRepository.findAllByRestaurantId(id);
         restaurant.setMenuItems(menuItems);
+
+        List<Review> reviews = reviewRepository.findAllByRestaurantId(id);
+        restaurant.setReviews(reviews);
+
         return restaurant;
     }
 
@@ -46,4 +52,6 @@ public class RestaurantService {
         restaurant.updateInformation(name, address);
         return restaurant;
     }
+
+
 }

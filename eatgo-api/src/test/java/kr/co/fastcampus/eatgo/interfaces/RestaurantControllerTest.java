@@ -54,7 +54,7 @@ public class RestaurantControllerTest {
                         containsString("\"name\":\"Joker house\"")));
     }
     @Test
-    public void detail() throws Exception {
+    public void detailWithExisted() throws Exception {
         Restaurant restaurant = Restaurant.builder()
                 .id(1004L)
                 .name("Joker house")
@@ -65,6 +65,14 @@ public class RestaurantControllerTest {
                 .name("Kimchi")
                 .build()));
 
+        Review review = Review.builder()
+                .name("kimchi")
+                .score(5)
+                .description("Great!")
+                .build();
+
+        restaurant.setReviews(Arrays.asList(review));
+
         given(restaurantService.getRestaurant(1004L)).willReturn(restaurant);
 
         mvc.perform(get("/restaurants/1004"))
@@ -74,8 +82,9 @@ public class RestaurantControllerTest {
                 .andExpect(content().string(
                         containsString("\"name\":\"Joker house\"")))
                 .andExpect(content().string(
-                        containsString("Kimchi")
-                ));
+                        containsString("Kimchi")))
+                .andExpect(content().string(
+                        containsString("Great!")));
     }
 
     @Test
