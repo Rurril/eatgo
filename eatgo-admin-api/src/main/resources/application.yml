@@ -1,0 +1,17 @@
+
+#yml 은 xml 패러디 비슷한 것, json 보다 더 간단한 형식을 보인다.
+spring:
+  datasource:
+    url: jdbc:h2:~/data/eatgo
+  jpa:
+    # 스프링 jpa는 하이버네이트를 기본적으로 사용한다.
+    hibernate:
+      ddl-auto: update
+
+# 여러개 할때는 ---를 통해서 구분지어 준다.
+---
+# 테스트 용으로 사용할 때는 다른 것을 하도록 한다.
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:h2:mem:test

@@ -11,14 +11,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ReviewController.class)
@@ -30,32 +34,16 @@ public class ReviewControllerTest{
     @MockBean
     private ReviewService reviewService;
 
-    @Test
-    public void createWithValidAttributes() throws Exception {
-        given(reviewService.addReview(eq(1L), any())).willReturn(Review.builder()
-                .id(1004L)
-                .name("Joker")
-                .score(3)
-                .description("Mat-it-da")
-                .build()
-        );
+    @Test // 관리자가 리뷰를 쓸일이 없으므로, 리뷰를 쓰는 메소드는 삭제하고 확인하는 것만 남긴다.
+    public void list() throws Exception {
+        List<Review> reviews = new ArrayList();
+        reviews.add(Review.builder().description("Cool").build());
 
-        mvc.perform(post("/restaurants/1/reviews")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"name\":\"Joker\",\"score\":3,\"description\":\"Mat-it-da\"}"))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("location", "/restaurants/1/reviews/1004"));
+        given(reviewService.getReviews()).willReturn(reviews);
 
-        verify(reviewService).addReview(eq(1L), any());
-    }
+        mvc.perform(get("/reviews"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Cool")));
 
-    @Test
-    public void createWithInvalidAttributes() throws Exception {
-        mvc.perform(post("/restaurants/1/reviews")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{}"))
-                .andExpect(status().isBadRequest());
-
-        verify(reviewService, never()).addReview(eq(1L), any());
     }
 }

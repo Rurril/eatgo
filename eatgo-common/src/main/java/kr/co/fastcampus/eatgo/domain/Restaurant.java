@@ -1,10 +1,8 @@
 package kr.co.fastcampus.eatgo.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sun.javafx.beans.IDProperty;
 import lombok.*;
 
-import javax.annotation.ManagedBean;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

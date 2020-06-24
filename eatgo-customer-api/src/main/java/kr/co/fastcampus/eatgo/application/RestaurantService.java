@@ -12,10 +12,16 @@ public class RestaurantService {
 
 
     private RestaurantRepository restaurantRepository;
+    private MenuItemRepository menuItemRepository;
+    private ReviewRepository reviewRepository;
 
     @Autowired // 한번에 세 개의 Repository를 Autowired 시켜버렸다.
-    public RestaurantService(RestaurantRepository restaurantRepository){
+    public RestaurantService(RestaurantRepository restaurantRepository,
+                             MenuItemRepository menuItemRepository,
+                             ReviewRepository reviewRepository) {
         this.restaurantRepository = restaurantRepository;
+        this.menuItemRepository = menuItemRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     public List<Restaurant> getRestaurants() {
@@ -25,6 +31,12 @@ public class RestaurantService {
     public Restaurant getRestaurant(Long id){
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RestaurantNotFoundException(id));
+
+        List<MenuItem> menuItems = menuItemRepository.findAllByRestaurantId(id);
+        restaurant.setMenuItems(menuItems);
+
+        List<Review> reviews = reviewRepository.findAllByRestaurantId(id);
+        restaurant.setReviews(reviews);
 
         return restaurant;
     }
